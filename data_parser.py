@@ -1,6 +1,5 @@
 import numpy as np
 import csv
-import os
 
 def ComputeDistances(arr: np.array) -> np.array:
     w = np.max(arr[:, 0]) - np.min(arr[:, 0])

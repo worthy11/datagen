@@ -57,15 +57,18 @@ def main():
             if list == len(LABELS):
                 print('Data collection finished. Go again? (y/n)')
                 key = cv2.waitKey(0)
-                if key == 'y':
+                if key == 89 or key == 121:
                     list = 0
                     label = 0
+                    filepath = './img/{}.png'.format(LABELS[list][label])
+                    tip = cv2.imread(filepath)
+                    tip = cv2.resize(tip, (0, 0), fx = 2, fy = 2)
+                    cv2.imshow('Instruction', tip)
                 else:
                     break
             else:
                 filepath = './img/{}.png'.format(LABELS[list][label])
                 tip = cv2.imread(filepath)
-                print(filepath)
                 tip = cv2.resize(tip, (0, 0), fx = 2, fy = 2)
                 cv2.imshow('Instruction', tip)
         detected = 0
