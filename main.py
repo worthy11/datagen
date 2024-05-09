@@ -32,6 +32,11 @@ def main():
         cv2.imshow('Webcam', img)
 
         key = cv2.waitKey(1)
+        
+        if key == 27:
+            cv2.destroyAllWindows()
+            return
+        
         if key == 13:
             if detected == 0:
                 print('No hand detected')
@@ -52,25 +57,17 @@ def main():
                         label += 1
 
                 else:
-                    print('Failed to save sample')
+                    print('Failed to save sample: unknown error')
 
             if list == len(LABELS):
-                print('Data collection finished. Go again? (y/n)')
-                key = cv2.waitKey(0)
-                if key == 89 or key == 121:
-                    list = 0
-                    label = 0
-                    filepath = './img/{}.png'.format(LABELS[list][label])
-                    tip = cv2.imread(filepath)
-                    tip = cv2.resize(tip, (0, 0), fx = 2, fy = 2)
-                    cv2.imshow('Instruction', tip)
-                else:
-                    break
-            else:
-                filepath = './img/{}.png'.format(LABELS[list][label])
-                tip = cv2.imread(filepath)
-                tip = cv2.resize(tip, (0, 0), fx = 2, fy = 2)
-                cv2.imshow('Instruction', tip)
+                list = 0
+                label = 0
+
+            filepath = './img/{}.png'.format(LABELS[list][label])
+            tip = cv2.imread(filepath)
+            tip = cv2.resize(tip, (0, 0), fx = 2, fy = 2)
+            cv2.imshow('Instruction', tip)
+
         detected = 0
 
 main()
