@@ -45,10 +45,7 @@ def main():
                 print('Too many hands detected')
 
             else:
-                str_label = LABELS[list][label]
-                if str_label.isdigit():
-                    str_label = LABELS[list][0]
-                if AddSample(sample, str_label):
+                if AddSample(sample, str(list)):
                     print('Saved sample successfully')
                     if len(LABELS[list]) == label + 1:
                         label = 0
