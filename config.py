@@ -7,3 +7,8 @@ DYNAMIC_LABELS = {
     4: "Literować",
     5: "Migać"
 }
+
+TEST_LABELS = {
+    0: "A",
+    1: "B"
+}

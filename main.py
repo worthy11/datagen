@@ -82,8 +82,8 @@ def pjm_dynamic():
     record = False
     landmarks = []
     distances = []
+    sample = []
     label = 0
-    key_count = 0
 
     while 1:
         not_empty, img = capture.read()
@@ -111,17 +111,17 @@ def pjm_dynamic():
                 record = False
                 print('Recording ended')
 
-                str_label = DYNAMIC_LABELS[label]
                 if landmarks and distances:
-                    sample = ComputeDifferences(landmarks) + ComputeDifferences(distances)
+                    # landmarks = ComputeDifferences(landmarks)
+                    # distances = ComputeDifferences(distances)
                 
-                    if AddDynamicSample(sample, str_label):
-                        print('Saved sample successfully')
-                        if label < len(DYNAMIC_LABELS):
+                    if AddDynamicSample(distances, str(label)):
+                        print(F'Saved {len(distances)}-frame sample successfully')
+                        if label < len(TEST_LABELS) - 1:
                             label += 1
                         else:
-                            label == 0
-                        print(F'Current label: {DYNAMIC_LABELS[label]}')
+                            label = 0
+                        print(F'Current label: {TEST_LABELS[label]}')
                     else:
                         print('Failed to save sample')
                 else:
@@ -129,6 +129,7 @@ def pjm_dynamic():
 
                 landmarks.clear()
                 distances.clear()
+                sample.clear()
             
 # pjm_static()
 pjm_dynamic()
