@@ -8,12 +8,12 @@ mp_hands = mp.solutions.hands
 hand_recognizer = mp_hands.Hands()
 mp_drawing = mp.solutions.drawing_utils
 
-def main():
+def pjm_static():
     list = 0
     label = 0
     detected = 0
 
-    filepath = './img/{}.png'.format(LABELS[list][label])
+    filepath = './img/{}.png'.format(STATIC_LABELS[list][label])
     tip = cv2.imread(filepath)
     tip = cv2.resize(tip, (0, 0), fx = 2, fy = 2)
     cv2.imshow('Instruction', tip)
@@ -45,9 +45,12 @@ def main():
                 print('Too many hands detected')
 
             else:
-                if AddSample(sample, str(list)):
+                str_label = STATIC_LABELS[list][label]
+                if str_label.isdigit():
+                    str_label = STATIC_LABELS[list][0]
+                if AddStaticSample(sample, str_label):
                     print('Saved sample successfully')
-                    if len(LABELS[list]) == label + 1:
+                    if len(STATIC_LABELS[list]) == label + 1:
                         label = 0
                         list += 1
                     else:
@@ -56,15 +59,76 @@ def main():
                 else:
                     print('Failed to save sample: unknown error')
 
-            if list == len(LABELS):
-                list = 0
-                label = 0
-
-            filepath = './img/{}.png'.format(LABELS[list][label])
-            tip = cv2.imread(filepath)
-            tip = cv2.resize(tip, (0, 0), fx = 2, fy = 2)
-            cv2.imshow('Instruction', tip)
-
+            if list == len(STATIC_LABELS):
+                print('Data collection finished. Go again? (y/n)')
+                key = cv2.waitKey(0)
+                if key == 89 or key == 121:
+                    list = 0
+                    label = 0
+                    filepath = './img/{}.png'.format(STATIC_LABELS[list][label])
+                    tip = cv2.imread(filepath)
+                    tip = cv2.resize(tip, (0, 0), fx = 2, fy = 2)
+                    cv2.imshow('Instruction', tip)
+                else:
+                    break
+            else:
+                filepath = './img/{}.png'.format(STATIC_LABELS[list][label])
+                tip = cv2.imread(filepath)
+                tip = cv2.resize(tip, (0, 0), fx = 2, fy = 2)
+                cv2.imshow('Instruction', tip)
         detected = 0
 
-main()
+def pjm_dynamic():
+    record = False
+    landmarks = []
+    distances = []
+    label = 0
+    key_count = 0
+
+    while 1:
+        not_empty, img = capture.read()
+        if not_empty and record:
+            imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            results = hand_recognizer.process(imgRGB)
+
+            if results.multi_hand_landmarks:
+                for hand_landmarks in results.multi_hand_landmarks:
+                    np_landmarks = ParseLandmarks(hand_landmarks)
+                    np_distances = ComputeDistances(np_landmarks)
+                    landmarks.append(np_landmarks)
+                    distances.append(np_distances)
+                    break
+
+        cv2.imshow('Webcam', img)
+
+        key = cv2.waitKey(1)
+        if key == 13:
+            if not record:
+                record = True
+                print('Recording started')
+
+            else:
+                record = False
+                print('Recording ended')
+
+                str_label = DYNAMIC_LABELS[label]
+                if landmarks and distances:
+                    sample = ComputeDifferences(landmarks) + ComputeDifferences(distances)
+                
+                    if AddDynamicSample(sample, str_label):
+                        print('Saved sample successfully')
+                        if label < len(DYNAMIC_LABELS):
+                            label += 1
+                        else:
+                            label == 0
+                        print(F'Current label: {DYNAMIC_LABELS[label]}')
+                    else:
+                        print('Failed to save sample')
+                else:
+                    print('No data recorded')
+
+                landmarks.clear()
+                distances.clear()
+            
+# pjm_static()
+pjm_dynamic()
