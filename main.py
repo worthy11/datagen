@@ -114,9 +114,11 @@ def pjm_dynamic():
                 if landmarks and distances:
                     # landmarks = ComputeDifferences(landmarks)
                     # distances = ComputeDifferences(distances)
+                    for l in landmarks:
+                        sample.append([coord for landmark in l for coord in landmark])
                 
-                    if AddDynamicSample(distances, str(label)):
-                        print(F'Saved {len(distances)}-frame sample successfully')
+                    if AddDynamicSample(sample, str(label)):
+                        print(F'Saved {len(landmarks)}-frame sample successfully')
                         if label < len(TEST_LABELS) - 1:
                             label += 1
                         else:
