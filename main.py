@@ -12,6 +12,7 @@ def pjm_static():
     list = 0
     label = 0
     detected = 0
+    prev = np.zeros(441)
 
     filepath = './img/{}.png'.format(STATIC_LABELS[list][label])
     tip = cv2.imread(filepath)
@@ -28,6 +29,10 @@ def pjm_static():
                 for hand_landmarks in results.multi_hand_landmarks:
                     detected += 1
                     sample = ParseLandmarks(hand_landmarks)
+                    distances = ComputeDistances(sample)
+                    mean = np.sum(distances - prev) ** 2
+                    prev = np.copy(distances)
+                    print(distances)
 
         cv2.imshow('Webcam', img)
 
@@ -133,5 +138,5 @@ def pjm_dynamic():
                 distances.clear()
                 sample.clear()
             
-# pjm_static()
-pjm_dynamic()
+pjm_static()
+# pjm_dynamic()

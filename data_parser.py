@@ -9,8 +9,8 @@ def ComputeDistances(arr: np.array) -> np.array:
         for j in range(21):
             dx = (arr[j][0] - arr[i][0]) / w
             dy = (arr[j][1] - arr[i][1]) / h
-            # dz = arr[j][2] - arr[i][2]
-            distances[i*21+j] = np.sqrt(dx**2 + dy**2)
+            dz = arr[j][2] - arr[i][2]
+            distances[i*21+j] = np.sqrt(dx**2 + dy**2 + dz**2)
     return distances
 
 def ParseLandmarks(hand_landmarks) -> np.array:
